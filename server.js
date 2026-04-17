@@ -89,6 +89,7 @@ app.post('/submit-taxi', async (req, res) => {
     rent_or_repairs,
     commission,
     net_income,
+    nps_score,
   } = req.body;
 
   const row = [
@@ -100,6 +101,7 @@ app.post('/submit-taxi', async (req, res) => {
     rent_or_repairs,
     commission,
     net_income,
+    nps_score,
   ];
 
   try {
