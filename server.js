@@ -54,6 +54,7 @@ app.post('/submit', async (req, res) => {
     daily_savings,
     weekly_savings,
     months_to_goal,
+    nps_score,
   } = req.body;
 
   const row = [
@@ -68,6 +69,7 @@ app.post('/submit', async (req, res) => {
     daily_savings,
     weekly_savings,
     months_to_goal,
+    nps_score,
   ];
 
   try {
