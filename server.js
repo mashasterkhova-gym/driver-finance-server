@@ -9,6 +9,7 @@ app.use(cors({
   origin: [
     'https://goal-drive-plan.lovable.app',
     'https://taxi-profit-pal.lovable.app',
+    'https://ride-safe-finance.lovable.app',
     'http://localhost:3000',
     'http://localhost:5173',
   ],
@@ -108,6 +109,40 @@ app.post('/submit-taxi', async (req, res) => {
 
   try {
     await appendToSheet('TaxiProfitPal', row);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Sheets append error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ride-safe-finance.lovable.app
+app.post('/submit-loan', async (req, res) => {
+  const {
+    loan_amount,
+    tenure_months,
+    markup_rate,
+    monthly_income,
+    expense_percent,
+    monthly_installment,
+    money_left,
+    nps_score,
+  } = req.body;
+
+  const row = [
+    new Date().toISOString(),
+    loan_amount,
+    tenure_months,
+    markup_rate,
+    monthly_income,
+    expense_percent,
+    monthly_installment,
+    money_left,
+    nps_score,
+  ];
+
+  try {
+    await appendToSheet('LoanCalculator', row);
     res.json({ success: true });
   } catch (err) {
     console.error('Sheets append error:', err.message);
