@@ -10,6 +10,7 @@ app.use(cors({
     'https://goal-drive-plan.lovable.app',
     'https://taxi-profit-pal.lovable.app',
     'https://ride-safe-finance.lovable.app',
+    'https://ride-earning-buddy.lovable.app',
     'http://localhost:3000',
     'http://localhost:5173',
   ],
@@ -143,6 +144,38 @@ app.post('/submit-loan', async (req, res) => {
 
   try {
     await appendToSheet('LoanCalculator', row);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Sheets append error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// earnings calculator
+app.post('/submit-earnings', async (req, res) => {
+  const {
+    vehicle,
+    hours_per_day,
+    days_per_week,
+    daily_earnings,
+    weekly_earnings,
+    monthly_earnings,
+    nps_score,
+  } = req.body;
+
+  const row = [
+    new Date().toISOString(),
+    vehicle,
+    hours_per_day,
+    days_per_week,
+    daily_earnings,
+    weekly_earnings,
+    monthly_earnings,
+    nps_score,
+  ];
+
+  try {
+    await appendToSheet('EarningsCalculator', row);
     res.json({ success: true });
   } catch (err) {
     console.error('Sheets append error:', err.message);
