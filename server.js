@@ -11,6 +11,7 @@ app.use(cors({
     'https://taxi-profit-pal.lovable.app',
     'https://ride-safe-finance.lovable.app',
     'https://ride-earning-buddy.lovable.app',
+    'https://ride-smart-pakistan.lovable.app',
     'http://localhost:3000',
     'http://localhost:5173',
   ],
@@ -176,6 +177,19 @@ app.post('/submit-earnings', async (req, res) => {
 
   try {
     await appendToSheet('EarningsCalculator', row);
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Sheets append error:', err.message);
+    res.status(500).json({ success: false, error: err.message });
+  }
+});
+
+// ride-smart-pakistan.lovable.app
+app.post('/submit-smart', async (req, res) => {
+  const { selected_request, correct, nps_score } = req.body;
+  const row = [new Date().toISOString(), selected_request, correct, nps_score];
+  try {
+    await appendToSheet('RideSmart', row);
     res.json({ success: true });
   } catch (err) {
     console.error('Sheets append error:', err.message);
