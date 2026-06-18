@@ -45,71 +45,52 @@ app.get('/health', (_req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────
-// BDU CAPTURE — temporary test endpoint to verify {{#A1QVti}} resolution.
+// BDU CAPTURE (production): persist the answer, then bounce back into the app
+// using the deeplink form that matches the caller's platform.
 //
-// It does NOT write to Sheets on purpose: this isolates the single question
-// "does the BDU templater resolve the selection_group value?" from any auth
-// or wrong-tab noise. It keeps the last 50 hits in memory and echoes back
-// whatever arrived in the query string.
+//   Android : indriver://open/any/bdu?slug=...&navigation_type=...
+//   iOS/else: https://indrive.com/app/bdu?slug=...&navigation_type=...   (note: different path)
 //
-// Test:
-//   1. Point the BDU button's url action at:
-//      https://<your-service>.onrender.com/capture?selected={{#A1QVti}}&next=test-module4_l3_s2
-//   2. Pick the 2nd item in the selector, tap the button.
-//   3. Read the page the browser opens, OR open /capture/log, OR watch Render logs.
-//      - selected=ik2a2n  -> the template resolved, you have a working sender.
-//      - selected={{#A1QVti}} (literal) or empty -> selection_group is NOT wired
-//        to the # provider; fall back to a TextField as the input widget.
+// Expected query params (built in BDU via concat):
+//   user, nps, comment, platform
 // ─────────────────────────────────────────────────────────────────────────
 const captures = [];
 
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, (c) =>
-    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])
-  );
-}
+app.all('/capture', async (req, res) => {
+  const { user, nps, comment, platform } = req.query;
 
-app.all('/capture', (req, res) => {
-  const entry = {
-    at: new Date().toISOString(),
-    method: req.method,
-    query: req.query,
-    body: req.body && Object.keys(req.body).length ? req.body : undefined,
-  };
-  captures.unshift(entry);
+  captures.unshift({ at: new Date().toISOString(), query: req.query });
   if (captures.length > 50) captures.pop();
-  console.log('CAPTURE', JSON.stringify(entry));
+  console.log('CAPTURE', JSON.stringify(req.query));
 
-  // ── PRODUCTION MODE (enable once the template is confirmed) ──
-  // Bounce back into the app instead of showing a page, and persist the value.
-  //
-  // try {
-  //   await appendToSheet('CaptureTest', [entry.at, req.query.selected]);
-  // } catch (err) {
-  //   console.error('Capture sheet append error:', err.message);
-  // }
-  // const next = req.query.next || 'test-module4_l3_s2';
-  // return res.redirect(302, `indriver://open/any/bdu?slug=${encodeURIComponent(next)}&navigation_type=replace`);
+  // 1) persist - best-effort: a Sheets hiccup must not block the redirect.
+  // Create a tab named "CourseEval" with headers: timestamp | user | nps | comment | platform
+  try {
+    await appendToSheet('CourseEval', [
+      new Date().toISOString(),
+      user,
+      nps,
+      comment,
+      platform,
+    ]);
+  } catch (err) {
+    console.error('Capture append error:', err.message);
+  }
 
-  // ── TEST MODE: show what arrived, right in the browser ──
-  const rows = Object.entries(req.query)
-    .map(([k, v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td></tr>`)
-    .join('');
-  res.set('Content-Type', 'text/html; charset=utf-8');
-  res.send(`<!doctype html><meta charset="utf-8"><title>capture</title>
-<body style="font-family:system-ui,-apple-system,sans-serif;padding:24px;line-height:1.5">
-<h2>Captured ✅</h2>
-<p style="color:#666">${escapeHtml(entry.method)} · ${escapeHtml(entry.at)}</p>
-<table cellpadding="8" style="border-collapse:collapse;border:1px solid #ddd">
-<tr style="background:#f5f5f5"><th align="left">key</th><th align="left">value</th></tr>
-${rows || '<tr><td colspan="2">(empty query)</td></tr>'}
-</table>
-<p style="margin-top:20px;color:#888">If <code>selected</code> shows a literal like
-<code>{{#A1QVti}}</code> instead of an item id, the template did not resolve.</p>
-</body>`);
+  // 2) platform-specific return deeplink — fixed next screen
+  //    Android -> custom scheme, everything else -> https universal link
+  const platformStr = String(platform || '').toLowerCase();
+  const ua = String(req.headers['user-agent'] || '').toLowerCase();
+  const isAndroid = platformStr ? platformStr.includes('android') : ua.includes('android');
+
+  const target = isAndroid
+    ? 'indriver://open/any/bdu?slug=eg_fininclusion_module1_l1_s9&navigation_type=replace'
+    : 'https://indrive.com/app/bdu?slug=eg_fininclusion_module1_l1_s9&navigation_type=replace';
+
+  res.redirect(302, target);
 });
 
-// View recent captures as JSON (handy if the browser flash is too quick to read).
+// View recent captures as JSON (debugging).
 app.get('/capture/log', (_req, res) => {
   res.json(captures);
 });
