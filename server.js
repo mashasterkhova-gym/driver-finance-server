@@ -1,3 +1,8 @@
+// Force IPv4 first for outbound DNS. On some hosts the IPv6 path to
+// googleapis.com is broken, which surfaces as "Premature close" on the
+// OAuth token fetch. This is a common, safe fix for that error.
+require('dns').setDefaultResultOrder('ipv4first');
+
 const express = require('express');
 const cors = require('cors');
 const { google } = require('googleapis');
