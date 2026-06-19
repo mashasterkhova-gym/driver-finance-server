@@ -134,23 +134,55 @@ app.get('/health', (_req, res) => {
 });
 
 // ─────────────────────────────────────────────────────────────────────────
+// Per-screen capture config for NEW screens (route: /capture/<key>).
+//   tab     -> Google Sheet tab name (create it; headers = columns below)
+//   columns -> column order. 'timestamp' is auto-filled; every other name must
+//              match a query-param sent from the BDU concat URL.
+//   labels  -> optional per-column id->text maps. selection_group sends item
+//              ids (which are reused across groups), so the map MUST be scoped
+//              per column. Unmapped values fall through and are stored as-is.
+//   next    -> slug of the BDU screen to return to after saving.
+//   navType -> BDU navigation_type for the return bounce (default 'replace').
+// NOTE: course-eval is NOT here — it stays on the legacy /capture route below
+// so its already-deployed button (which hits /capture, no key) keeps working.
+// ─────────────────────────────────────────────────────────────────────────
+const CAPTURES = {
+  'stem-form': {
+    tab: 'StemForm',
+    columns: ['timestamp', 'user', 'name', 'child_name', 'phone',
+              'age_group', 'smartphone', 'days', 'time_slot', 'location'],
+    labels: {
+      age_group:  { Y4dzU6: '8–10',     uqCnnW: '11–13',     HKJ0xx: '14–18' },
+      smartphone: { Y4dzU6: 'Yes',      uqCnnW: 'No' },
+      days:       { Y4dzU6: 'Weekdays', uqCnnW: 'Weekends' },
+      time_slot:  { Y4dzU6: 'Morning',  uqCnnW: 'Afternoon', HKJ0xx: 'Evening' },
+      location:   { Y4dzU6: 'DHA',      uqCnnW: 'Shadman',
+                    HKJ0xx: 'Civic Center Township Commercial Area Lahore' },
+    },
+    next: 'stem_card10',
+    navType: 'present',
+  },
+  // add new screens here
+};
+
+// ─────────────────────────────────────────────────────────────────────────
 // BDU CAPTURE (production): persist the answer, then bounce back into the app
 // via the BDU deeplink (custom scheme works via redirect on both platforms).
-//
-// Expected query params (built in BDU via concat):
-//   user, nps, comment
 // ─────────────────────────────────────────────────────────────────────────
 const captures = [];
 
+// Legacy single-screen capture for course-eval. Button URL: /capture (no key).
+// Left untouched so the deployed course-eval screen keeps working.
+//   Expected query params (built in BDU via concat): user, nps, comment
+//   Tab "CourseEval" with headers: timestamp | user | nps | comment
 app.all('/capture', async (req, res) => {
   const { user, nps, comment } = req.query;
 
-  captures.unshift({ at: new Date().toISOString(), query: req.query });
+  captures.unshift({ at: new Date().toISOString(), key: 'course-eval', query: req.query });
   if (captures.length > 50) captures.pop();
   console.log('CAPTURE', JSON.stringify(req.query));
 
   // 1) persist - best-effort: a Sheets hiccup must not block the redirect.
-  // Create a tab named "CourseEval" with headers: timestamp | user | nps | comment
   try {
     await appendToSheet('CourseEval', [
       new Date().toISOString(),
@@ -167,8 +199,43 @@ app.all('/capture', async (req, res) => {
 });
 
 // View recent captures as JSON (debugging).
+// MUST stay registered BEFORE /capture/:key, or :key would swallow "log".
 app.get('/capture/log', (_req, res) => {
   res.json(captures);
+});
+
+// Config-driven capture for new screens: /capture/<key>
+app.all('/capture/:key', async (req, res) => {
+  const cfg = CAPTURES[req.params.key];
+  if (!cfg) {
+    res.status(404).json({ error: 'unknown capture key: ' + req.params.key });
+    return;
+  }
+
+  captures.unshift({ at: new Date().toISOString(), key: req.params.key, query: req.query });
+  if (captures.length > 50) captures.pop();
+  console.log('CAPTURE', req.params.key, JSON.stringify(req.query));
+
+  // Build the row; translate ids to text where a per-column label map exists.
+  const row = cfg.columns.map((c) => {
+    if (c === 'timestamp') return new Date().toISOString();
+    const raw = req.query[c] ?? '';
+    const map = cfg.labels && cfg.labels[c];
+    return map ? (map[raw] ?? raw) : raw; // unmapped id -> stored as-is
+  });
+
+  // best-effort: a Sheets hiccup must not block the return into the app.
+  try {
+    await appendToSheet(cfg.tab, row);
+  } catch (err) {
+    console.error('Capture append error:', err.message);
+  }
+
+  res.redirect(
+    302,
+    `indriver://open/any/bdu?slug=${encodeURIComponent(cfg.next)}` +
+    `&navigation_type=${cfg.navType || 'replace'}`
+  );
 });
 
 // goal-drive-plan.lovable.app
