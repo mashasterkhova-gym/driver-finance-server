@@ -19,25 +19,37 @@ app.use(cors({
 }));
 app.use(express.json());
 
-function getAuthClient() {
-  return new google.auth.GoogleAuth({
-    credentials: {
-      client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-      private_key: process.env.GOOGLE_PRIVATE_KEY.replace(/\\n/g, '\n'),
-    },
-    scopes: ['https://www.googleapis.com/auth/spreadsheets'],
-  });
-}
+// Create the Sheets client ONCE and reuse it across requests. GoogleAuth caches
+// the OAuth token internally, so we stop hitting the token endpoint on every
+// write — which is where it was failing ("Premature close" on the token fetch).
+const auth = new google.auth.GoogleAuth({
+  credentials: {
+    client_email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
+    private_key: (process.env.GOOGLE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+  },
+  scopes: ['https://www.googleapis.com/auth/spreadsheets'],
+});
+const sheets = google.sheets({ version: 'v4', auth });
 
-async function appendToSheet(sheetName, row) {
-  const auth = getAuthClient();
-  const sheets = google.sheets({ version: 'v4', auth });
-  await sheets.spreadsheets.values.append({
-    spreadsheetId: process.env.SPREADSHEET_ID,
-    range: `${sheetName}!A1`,
-    valueInputOption: 'RAW',
-    requestBody: { values: [row] },
-  });
+// Append with a small retry — "Premature close" / ECONNRESET on Google's endpoint
+// is usually transient, so a couple of quick retries clears it.
+async function appendToSheet(sheetName, row, attempts = 3) {
+  let lastErr;
+  for (let i = 0; i < attempts; i++) {
+    try {
+      await sheets.spreadsheets.values.append({
+        spreadsheetId: process.env.SPREADSHEET_ID,
+        range: `${sheetName}!A1`,
+        valueInputOption: 'RAW',
+        requestBody: { values: [row] },
+      });
+      return;
+    } catch (err) {
+      lastErr = err;
+      if (i < attempts - 1) await new Promise((r) => setTimeout(r, 300 * (i + 1)));
+    }
+  }
+  throw lastErr;
 }
 
 app.get('/health', (_req, res) => {
@@ -85,7 +97,7 @@ app.all('/capture', async (req, res) => {
 
   const target = isAndroid
     ? 'indriver://open/any/bdu?slug=eg_fininclusion_module1_l1_s9&navigation_type=replace'
-    : 'https://indrive.com/app/bdu?slug=eg_fininclusion_module1_l1_s9&navigation_type=replace';
+    : 'indriver://open/any/bdu?slug=eg_fininclusion_module1_l1_s9&navigation_type=replace';
 
   res.redirect(302, target);
 });
