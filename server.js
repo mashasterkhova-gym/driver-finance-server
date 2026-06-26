@@ -135,14 +135,17 @@ app.get('/health', (_req, res) => {
 
 // ─────────────────────────────────────────────────────────────────────────
 // Per-screen capture config for NEW screens (route: /capture/<key>).
-//   tab     -> Google Sheet tab name (create it; headers = columns below)
-//   columns -> column order. 'timestamp' is auto-filled; every other name must
-//              match a query-param sent from the BDU concat URL.
-//   labels  -> optional per-column id->text maps. selection_group sends item
-//              ids (which are reused across groups), so the map MUST be scoped
-//              per column. Unmapped values fall through and are stored as-is.
-//   next    -> slug of the BDU screen to return to after saving.
-//   navType -> BDU navigation_type for the return bounce (default 'replace').
+//   tab        -> Google Sheet tab name (create it; headers = columns below)
+//   columns    -> column order. 'timestamp' is auto-filled; every other name
+//                 must match a query-param sent from the BDU concat URL.
+//   labels     -> optional per-column id->text maps. selection_group sends item
+//                 ids (which are reused across groups), so the map MUST be
+//                 scoped per column. Unmapped values fall through, stored as-is.
+//   noRedirect -> true = stay on the screen (e.g. a snackbar confirms the save).
+//                 Server returns 204 and does NOT navigate; 'next'/'navType'
+//                 are then unused.
+//   next       -> slug of the BDU screen to return to after saving.
+//   navType    -> BDU navigation_type for the return bounce (default 'replace').
 // NOTE: course-eval is NOT here — it stays on the legacy /capture route below
 // so its already-deployed button (which hits /capture, no key) keeps working.
 // ─────────────────────────────────────────────────────────────────────────
@@ -161,6 +164,11 @@ const CAPTURES = {
     },
     next: 'stem_card10',
     navType: 'present',
+  },
+  'course-survey': {
+    tab: 'CourseEval',
+    columns: ['timestamp', 'user', 'q1', 'q2', 'q3', 'q4'],
+    noRedirect: true, // stay on the screen; the button's snackbar confirms the save
   },
   // add new screens here
 };
@@ -224,11 +232,17 @@ app.all('/capture/:key', async (req, res) => {
     return map ? (map[raw] ?? raw) : raw; // unmapped id -> stored as-is
   });
 
-  // best-effort: a Sheets hiccup must not block the return into the app.
+  // best-effort: a Sheets hiccup must not block the response.
   try {
     await appendToSheet(cfg.tab, row);
   } catch (err) {
     console.error('Capture append error:', err.message);
+  }
+
+  // Stay on the screen (e.g. a snackbar confirms the save) — quiet 204, no nav.
+  if (cfg.noRedirect) {
+    res.status(204).end();
+    return;
   }
 
   res.redirect(
