@@ -168,7 +168,8 @@ const CAPTURES = {
   'course-survey': {
     tab: 'CourseEval',
     columns: ['timestamp', 'user', 'q1', 'q2', 'q3', 'q4'],
-    noRedirect: true, // stay on the screen; the button's snackbar confirms the save
+    next: 'eg_surveycomplete',
+    navType: 'present',
   },
   // add new screens here
 };
