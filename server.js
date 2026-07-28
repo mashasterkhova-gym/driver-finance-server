@@ -161,6 +161,12 @@ const CAPTURES = {
     next: 'ne_surveycomplete',
     navType: 'present',
   },
+  'course-survey-morocco': {
+    tab: 'CourseSurveyMorocco',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'mo_surveycomplete',
+    navType: 'present',
+  },
   // add new screens here
 };
 // ─────────────────────────────────────────────────────────────────────────
