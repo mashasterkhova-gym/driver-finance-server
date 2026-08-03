@@ -167,6 +167,12 @@ const CAPTURES = {
     next: 'mo_surveycomplete',
     navType: 'present',
   },
+  'course-survey-colombia': {
+    tab: 'CourseSurveyColombia',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'co_surveycomplete',
+    navType: 'present',
+  },
   // add new screens here
 };
 // ─────────────────────────────────────────────────────────────────────────
