@@ -180,7 +180,7 @@ const CAPTURES = {
   'course-survey-mexico': {
     tab: 'CourseSurveyMx',
     columns: ['timestamp', 'user', 'q1', 'q2', 'q3', 'q4'],
-    next: 'MX_RETURN_SLUG', // TODO: replace with the Mexico success-screen slug
+    next: 'mx_surveycomplete',
     navType: 'present',
   },
   // add new screens here
