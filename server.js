@@ -177,6 +177,12 @@ const CAPTURES = {
     next: 'pa_fininclusion_module4_l3_s8_success',
     navType: 'present',
   },
+  'course-survey-mexico': {
+    tab: 'CourseSurveyMx',
+    columns: ['timestamp', 'user', 'q1', 'q2', 'q3', 'q4'],
+    next: 'MX_RETURN_SLUG', // TODO: replace with the Mexico success-screen slug
+    navType: 'present',
+  },
   // add new screens here
 };
 
