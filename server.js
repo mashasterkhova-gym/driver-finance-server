@@ -183,6 +183,26 @@ const CAPTURES = {
     next: 'mx_surveycomplete',
     navType: 'present',
   },
+  // Nepal. NOTE: its button must be updated to key 'course-survey-nepal'
+  // (it previously used 'course-survey-m4', which now belongs to Pakistan).
+  'course-survey-nepal': {
+    tab: 'CourseSurvey',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'ne_surveycomplete',
+    navType: 'present',
+  },
+  'course-survey-morocco': {
+    tab: 'CourseSurveyMorocco',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'mo_surveycomplete',
+    navType: 'present',
+  },
+  'course-survey-colombia': {
+    tab: 'CourseSurveyColombia',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'co_surveycomplete',
+    navType: 'present',
+  },
   // add new screens here
 };
 
