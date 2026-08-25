@@ -203,6 +203,29 @@ const CAPTURES = {
     next: 'co_surveycomplete',
     navType: 'present',
   },
+  'stem-form-egypt': {
+    tab: 'StemFormEgypt',
+    columns: ['timestamp', 'user', 'child_name', 'phone', 'age_group',
+              'days', 'time_slot', 'area', 'attended_workshop',
+              'has_laptop', 'has_smartphone', 'has_internet', 'can_transport'],
+    labels: {
+      age_group: { Y4dzU6: '8–11', uqCnnW: '12–14', HKJ0xx: '15–18' },
+      days: {
+        Y4dzU6: 'Weekends only (Fridays & Saturdays)',
+        uqCnnW: 'Weekdays only (Sunday to Thursday)',
+        fG0wqS: 'Both weekends and weekdays',
+      },
+      time_slot: { Y4dzU6: 'Morning (9–2)', uqCnnW: 'Afternoon (3–6)', HKJ0xx: 'Evening (7–10)' },
+      area: { Y4dzU6: 'Nasr City', uqCnnW: 'Mohandessin', HKJ0xx: 'Maadi', YwOfJL: 'Zamalek', mjfALv: 'Other' },
+      attended_workshop: { Y4dzU6: 'Yes', uqCnnW: 'No' },
+      has_laptop:        { Y4dzU6: 'Yes', uqCnnW: 'No' },
+      has_smartphone:    { Y4dzU6: 'Yes', uqCnnW: 'No' },
+      has_internet:      { Y4dzU6: 'Yes', uqCnnW: 'No' },
+      can_transport:     { Y4dzU6: 'Yes', uqCnnW: 'No' },
+    },
+    next: 'stem_submit_egypt',
+    navType: 'present',
+  },
   // add new screens here
 };
 
