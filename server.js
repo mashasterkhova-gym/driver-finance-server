@@ -115,15 +115,13 @@ async function getAccessToken() {
   return cachedToken.token;
 }
 
-async function appendToSheet(sheetName, row) {
+async function appendToSheet(sheetName, row, spreadsheetId) {
   const token = await getAccessToken();
+  const id = spreadsheetId || process.env.SPREADSHEET_ID;
   const range = encodeURIComponent(`${sheetName}!A1`);
-  const path =
-    `/v4/spreadsheets/${process.env.SPREADSHEET_ID}` +
-    `/values/${range}:append?valueInputOption=RAW`;
   await httpsPost(
     'sheets.googleapis.com',
-    path,
+    `/v4/spreadsheets/${id}/values/${range}:append?valueInputOption=RAW`,
     { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
     { values: [row] }
   );
@@ -136,6 +134,9 @@ app.get('/health', (_req, res) => {
 // ─────────────────────────────────────────────────────────────────────────
 // Per-screen capture config for NEW screens (route: /capture/<key>).
 //   tab        -> Google Sheet tab name (create it; headers = columns below)
+//   spreadsheetId -> optional: write to a DIFFERENT Google Sheet file than the
+//                 default SPREADSHEET_ID env var. Share that file with the
+//                 service account (Editor) too. Omit to use the default file.
 //   columns    -> column order. 'timestamp' is auto-filled; every other name
 //                 must match a query-param sent from the BDU concat URL.
 //   labels     -> optional per-column id->text maps. selection_group sends item
@@ -226,6 +227,50 @@ const CAPTURES = {
     next: 'stem_submit_egypt',
     navType: 'present',
   },
+  // ── Morocco STEM forms (Casablanca locations). Each writes to its OWN file
+  //    (spreadsheetId). Server redirects to the shared success screen.
+  //    'course' = the top course selector.
+  'stem-form-anfa': {
+    spreadsheetId: '1NX6HJdQmc6ElzY389bTE3O_4HgMEmE2c4FbsTAQ27Sw',
+    tab: 'Responses',
+    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
+    labels: {
+      course: {
+        MNv24G: 'Digital Literacy ✍️',
+        NNv24G: 'Visual Programming 🎨',
+        ONv24G: 'Artificial Intelligence 🧠',
+        PNv24G: 'Python 🐍',
+      },
+      schedule:  { T9nrQ7: 'Weekends, morning', U9nrQ7: 'Weekdays, evening' },
+      transport: { v8zpAo: 'Yes', w8zpAo: 'No' },
+    },
+    next: 'stem_submit_morocco',
+    navType: 'push',
+  },
+  'stem-form-bouskoura': {
+    spreadsheetId: 'BOUSKOURA_FILE_ID', // TODO: paste the Bouskoura file id
+    tab: 'Responses',
+    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
+    labels: {
+      // course: fill per Bouskoura order (3 courses): 2VNZVK / 3VNZVK / 4VNZVK
+      schedule:  { WwNnGM: 'Weekends, morning', XwNnGM: 'Weekdays, evening' },
+      transport: { HgteKg: 'Yes', IgteKg: 'No' },
+    },
+    next: 'stem_submit_morocco',
+    navType: 'push',
+  },
+  'stem-form-hayhassani': {
+    spreadsheetId: 'HAYHASSANI_FILE_ID', // TODO: paste the Hay Hassani file id
+    tab: 'Responses',
+    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
+    labels: {
+      // course: fill per Hay Hassani order (4 courses): 5dMtVi / 6dMtVi / 7dMtVi / 8dMtVi
+      schedule:  { '7vZ272': 'Weekends, morning', '8vZ272': 'Weekdays, evening' },
+      transport: { '2hjW5o': 'Yes', '3hjW5o': 'No' },
+    },
+    next: 'stem_submit_morocco',
+    navType: 'push',
+  },
   // add new screens here
 };
 
@@ -290,7 +335,7 @@ app.all('/capture/:key', async (req, res) => {
 
   // best-effort: a Sheets hiccup must not block the response.
   try {
-    await appendToSheet(cfg.tab, row);
+    await appendToSheet(cfg.tab, row, cfg.spreadsheetId);
   } catch (err) {
     console.error('Capture append error:', err.message);
   }
