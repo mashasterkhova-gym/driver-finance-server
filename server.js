@@ -236,10 +236,10 @@ const CAPTURES = {
     columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
     labels: {
       course: {
-        MNv24G: 'Digital Literacy ✍️',
-        NNv24G: 'Visual Programming 🎨',
-        ONv24G: 'Artificial Intelligence 🧠',
-        PNv24G: 'Python 🐍',
+        MNv24G: 'Digital Literacy',
+        NNv24G: 'Visual Programming',
+        ONv24G: 'Artificial Intelligence',
+        PNv24G: 'Python',
       },
       schedule:  { T9nrQ7: 'Weekends, morning', U9nrQ7: 'Weekdays, evening' },
       transport: { v8zpAo: 'Yes', w8zpAo: 'No' },
