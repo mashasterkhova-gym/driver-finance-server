@@ -260,11 +260,16 @@ const CAPTURES = {
     navType: 'push',
   },
   'stem-form-hayhassani': {
-    spreadsheetId: 'HAYHASSANI_FILE_ID', // TODO: paste the Hay Hassani file id
+    spreadsheetId: '1NVb08P1LFxx4NU0B6L0_rh25hT8tyztZF02wKt7vJak',
     tab: 'Responses',
     columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
     labels: {
-      // course: fill per Hay Hassani order (4 courses): 5dMtVi / 6dMtVi / 7dMtVi / 8dMtVi
+      course: {
+        '5dMtVi': 'Digital Literacy',
+        '6dMtVi': 'Visual Programming',
+        '7dMtVi': 'Artificial Intelligence',
+        '8dMtVi': 'Python',
+      },
       schedule:  { '7vZ272': 'Weekends, morning', '8vZ272': 'Weekdays, evening' },
       transport: { '2hjW5o': 'Yes', '3hjW5o': 'No' },
     },
