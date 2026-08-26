@@ -248,11 +248,15 @@ const CAPTURES = {
     navType: 'push',
   },
   'stem-form-bouskoura': {
-    spreadsheetId: 'BOUSKOURA_FILE_ID', // TODO: paste the Bouskoura file id
+    spreadsheetId: '1habiGI9TR_ZTbbMaeV36ZrKWcwV71XMxydLThKw_i0s',
     tab: 'Responses',
     columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
     labels: {
-      // course: fill per Bouskoura order (3 courses): 2VNZVK / 3VNZVK / 4VNZVK
+      course: {
+        '2VNZVK': 'Digital Literacy',
+        '3VNZVK': 'Visual Programming',
+        '4VNZVK': 'Python',
+      },
       schedule:  { WwNnGM: 'Weekends, morning', XwNnGM: 'Weekdays, evening' },
       transport: { HgteKg: 'Yes', IgteKg: 'No' },
     },
