@@ -280,6 +280,51 @@ const CAPTURES = {
     next: 'stem_submit_morocco',
     navType: 'push',
   },
+  // ── Pakistan STEM forms (3 cities). Identical structure; each writes to its
+  //    own tab in the DEFAULT file (no spreadsheetId). Server redirects to the
+  //    shared success screen. 'choice' options are placeholders (Option 1–9).
+  'stem-pk-islamabad': {
+    tab: 'StemPakistanIslamabad',
+    columns: ['timestamp', 'user', 'name', 'phone', 'age_group', 'choice'],
+    labels: {
+      age_group: { Y4dzU6: '8–10', uqCnnW: '11–13', HKJ0xx: '14–18' },
+      choice: {
+        Y4dzU6: 'Option 1', uqCnnW: 'Option 2', dpQ7nl: 'Option 3',
+        '8UlsIu': 'Option 4', '3AwvYB': 'Option 5', HbByyA: 'Option 6',
+        '9PpBmY': 'Option 7', '6kmeLl': 'Option 8', a38Dap: 'Option 9',
+      },
+    },
+    next: 'stem_submit_pakistan',
+    navType: 'push',
+  },
+  'stem-pk-karachi': {
+    tab: 'StemPakistanKarachi',
+    columns: ['timestamp', 'user', 'name', 'phone', 'age_group', 'choice'],
+    labels: {
+      age_group: { Y4dzU6: '8–10', uqCnnW: '11–13', HKJ0xx: '14–18' },
+      choice: {
+        Y4dzU6: 'Option 1', uqCnnW: 'Option 2', dpQ7nl: 'Option 3',
+        '8UlsIu': 'Option 4', '3AwvYB': 'Option 5', HbByyA: 'Option 6',
+        '9PpBmY': 'Option 7', '6kmeLl': 'Option 8', a38Dap: 'Option 9',
+      },
+    },
+    next: 'stem_submit_pakistan',
+    navType: 'push',
+  },
+  'stem-pk-lahore': {
+    tab: 'StemPakistanLahore',
+    columns: ['timestamp', 'user', 'name', 'phone', 'age_group', 'choice'],
+    labels: {
+      age_group: { Y4dzU6: '8–10', uqCnnW: '11–13', HKJ0xx: '14–18' },
+      choice: {
+        Y4dzU6: 'Option 1', uqCnnW: 'Option 2', dpQ7nl: 'Option 3',
+        '8UlsIu': 'Option 4', '3AwvYB': 'Option 5', HbByyA: 'Option 6',
+        '9PpBmY': 'Option 7', '6kmeLl': 'Option 8', a38Dap: 'Option 9',
+      },
+    },
+    next: 'stem_submit_pakistan',
+    navType: 'push',
+  },
   // add new screens here
 };
 
