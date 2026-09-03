@@ -233,50 +233,21 @@ const CAPTURES = {
   'stem-form-anfa': {
     spreadsheetId: '1NX6HJdQmc6ElzY389bTE3O_4HgMEmE2c4FbsTAQ27Sw',
     tab: 'Responses',
-    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
-    labels: {
-      course: {
-        MNv24G: 'Digital Literacy',
-        NNv24G: 'Visual Programming',
-        ONv24G: 'Artificial Intelligence',
-        PNv24G: 'Python',
-      },
-      schedule:  { T9nrQ7: 'Weekends, morning', U9nrQ7: 'Weekdays, evening' },
-      transport: { v8zpAo: 'Yes', w8zpAo: 'No' },
-    },
+    columns: ['timestamp', 'user', 'parent_name', 'child_name', 'phone', 'child_age'],
     next: 'stem_submit_morocco',
     navType: 'push',
   },
   'stem-form-bouskoura': {
     spreadsheetId: '1habiGI9TR_ZTbbMaeV36ZrKWcwV71XMxydLThKw_i0s',
     tab: 'Responses',
-    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
-    labels: {
-      course: {
-        '2VNZVK': 'Digital Literacy',
-        '3VNZVK': 'Visual Programming',
-        '4VNZVK': 'Python',
-      },
-      schedule:  { WwNnGM: 'Weekends, morning', XwNnGM: 'Weekdays, evening' },
-      transport: { HgteKg: 'Yes', IgteKg: 'No' },
-    },
+    columns: ['timestamp', 'user', 'parent_name', 'child_name', 'phone', 'child_age'],
     next: 'stem_submit_morocco',
     navType: 'push',
   },
   'stem-form-hayhassani': {
     spreadsheetId: '1NVb08P1LFxx4NU0B6L0_rh25hT8tyztZF02wKt7vJak',
     tab: 'Responses',
-    columns: ['timestamp', 'user', 'course', 'child_name', 'phone', 'schedule', 'age', 'transport'],
-    labels: {
-      course: {
-        '5dMtVi': 'Digital Literacy',
-        '6dMtVi': 'Visual Programming',
-        '7dMtVi': 'Artificial Intelligence',
-        '8dMtVi': 'Python',
-      },
-      schedule:  { '7vZ272': 'Weekends, morning', '8vZ272': 'Weekdays, evening' },
-      transport: { '2hjW5o': 'Yes', '3hjW5o': 'No' },
-    },
+    columns: ['timestamp', 'user', 'parent_name', 'child_name', 'phone', 'child_age'],
     next: 'stem_submit_morocco',
     navType: 'push',
   },
