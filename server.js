@@ -309,10 +309,10 @@ const CAPTURES = {
     navType: 'present',
   },
   // ── Morocco STEM form v2 (cohort 2, one form, no venues). Writes to the
-  //    Bouskoura file in its own tab. field1 = parent name, field2 = child name,
-  //    field3 = phone, field4 = child age, field5 = area; choice1 = schedule.
+  //    DEFAULT file (same as StemFormEgyptV2). field1 = parent name,
+  //    field2 = child name, field3 = phone, field4 = child age, field5 = area;
+  //    choice1 = schedule.
   'stem-form-morocco-v2': {
-    spreadsheetId: '1habiGI9TR_ZTbbMaeV36ZrKWcwV71XMxydLThKw_i0s',
     tab: 'StemFormMoroccoV2',
     columns: ['timestamp', 'user', 'field1', 'field2', 'field3', 'field4', 'field5', 'choice1'],
     labels: {
