@@ -296,6 +296,18 @@ const CAPTURES = {
     next: 'stem_submit_pakistan',
     navType: 'push',
   },
+  // ── Egypt STEM form v2 (questions reworked; old 'stem-form-egypt' kept for
+  //    its existing rows). field1–3 = textfields in screen order.
+  'stem-form-egypt-v2': {
+    tab: 'StemFormEgyptV2',
+    columns: ['timestamp', 'user', 'field1', 'field2', 'field3', 'choice1', 'choice2'],
+    labels: {
+      choice1: { Y4dzU6: '8-11', uqCnnW: '12-14', HKJ0xx: '15-18' },
+      choice2: { Y4dzU6: 'Nasr City', uqCnnW: 'Mohandessin', HKJ0xx: 'Maadi', YwOfJL: 'Zamalek', mjfALv: 'Other' },
+    },
+    next: 'city-eg-pdp-action-stem-algorithmics-3-driver',
+    navType: 'present',
+  },
   // add new screens here
 };
 
