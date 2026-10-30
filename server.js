@@ -321,6 +321,13 @@ const CAPTURES = {
     next: 'city-ma-pdp-action-stem-algorithmics-3-driver',
     navType: 'push',
   },
+  // ── Peru fin-inclusion course survey (4 textareas: oTD54W, K11Lrf, GHEwQB, SogY0z).
+  'course-survey-peru': {
+    tab: 'CourseSurveyPeru',
+    columns: ['timestamp', 'user', 'a1', 'a2', 'a3', 'a4'],
+    next: 'city-pe-pdp-info-fininclusion-menu-driver',
+    navType: 'present',
+  },
   // add new screens here
 };
 
